@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 90' — Transfer News Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px 60px;
+    font-family: 'Barlow', sans-serif;
+  }
+  .editor {
+    background: #111;
+    border: 0.5px solid #2E2E2E;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 28px;
+  }
+  .editor-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #5A5A5A;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .field-group { margin-bottom: 14px; }
+  .field-group label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #5A5A5A;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .field-group input, .field-group select {
+    width: 100%;
+    background: #1A1A1A;
+    border: 0.5px solid #2E2E2E;
+    border-radius: 3px;
+    padding: 8px 10px;
+    color: #F0EDE8;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field-group input:focus, .field-group select:focus { border-color: #F4A01C; }
+  .field-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; }
+  .field-row .arrow-label {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: #D62828;
+    padding-bottom: 7px;
+  }
+  .hint { font-size: 10px; color: #3A3A3A; margin-top: 4px; font-style: italic; }
+
+  .preview-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #3A3A3A;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .phone-frame {
+    width: 270px;
+    height: 480px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0A0A0A;
+    box-shadow: 0 0 0 1px #2E2E2E;
+  }
+
+  .card-inner {
+    height: 100%;
+    padding: 16px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .gold-bar {
+    height: 3px;
+    background: #F4A01C;
+    width: 55%;
+    margin-bottom: 12px;
+    border-radius: 1px;
+  }
+  .transfer-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #F4A01C;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .clubs-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .club-from {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #5A5A5A;
+    letter-spacing: 1px;
+  }
+  .club-arrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: #D62828;
+    line-height: 1;
+  }
+  .club-to {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #F0EDE8;
+    letter-spacing: 1px;
+  }
+  .player-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: #F0EDE8;
+    line-height: 1;
+    letter-spacing: 2px;
+    flex: 1;
+  }
+  .player-name span { color: #F4A01C; }
+  .fee-card {
+    background: #141414;
+    border: 0.5px solid #2E2E2E;
+    border-radius: 2px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .fee-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #5A5A5A;
+    text-transform: uppercase;
+  }
+  .fee-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: #F4A01C;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 1px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    width: fit-content;
+  }
+  .pill-rumour { background: #1A1A1A; color: #5A5A5A; border: 0.5px solid #2E2E2E; }
+  .pill-breaking { background: #D62828; color: #F0EDE8; }
+  .pill-official { background: #F4A01C; color: #0A0A0A; }
+  .divider { height: 0.5px; background: #2E2E2E; margin: 10px 0; }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: #F0EDE8;
+  }
+  .wordmark span { color: #D62828; }
+  .source-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #3A3A3A;
+    text-transform: uppercase;
+  }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 18px; width: 270px; }
+  .btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: #F4A01C; color: #0A0A0A; }
+  .btn-secondary { background: #1E1E1E; color: #5A5A5A; border: 0.5px solid #2E2E2E; }
+</style>
+</head>
+<body>
+
+<div class="editor">
+  <div class="editor-title">Edit Content</div>
+
+  <div class="field-group">
+    <label>Player First Name</label>
+    <input type="text" id="firstName" value="Kylian" oninput="update()">
+  </div>
+
+  <div class="field-group">
+    <label>Player Last Name (larger, gold highlight)</label>
+    <input type="text" id="lastName" value="Mbappé" oninput="update()">
+  </div>
+
+  <div class="field-group">
+    <label>Club Move (From → To)</label>
+    <div class="field-row">
+      <input type="text" id="clubFrom" value="PSG" oninput="update()">
+      <div class="arrow-label">→</div>
+      <input type="text" id="clubTo" value="Man City" oninput="update()">
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Reported Fee</label>
+    <input type="text" id="fee" value="£180M" oninput="update()">
+    <div class="hint">Use £, €, or $ prefix. Write "Undisclosed" if unknown.</div>
+  </div>
+
+  <div class="field-group">
+    <label>Status</label>
+    <select id="status" onchange="update()">
+      <option value="rumour">Rumour</option>
+      <option value="breaking">Breaking</option>
+      <option value="official">Official ✓</option>
+    </select>
+  </div>
+
+  <div class="field-group">
+    <label>Source Tag (bottom right)</label>
+    <input type="text" id="source" value="Sky Sports" oninput="update()">
+  </div>
+</div>
+
+<div class="preview-label">9:16 Preview</div>
+
+<div class="phone-frame">
+  <div class="card-inner">
+    <div class="gold-bar"></div>
+    <div class="transfer-label">Transfer Update</div>
+    <div class="clubs-row">
+      <div class="club-from" id="p-from">PSG</div>
+      <div class="club-arrow">→</div>
+      <div class="club-to" id="p-to">Man City</div>
+    </div>
+    <div class="player-name" id="p-player">KYLIAN<br><span>MBAPPÉ</span></div>
+    <div class="fee-card">
+      <div class="fee-label">Reported Fee</div>
+      <div class="fee-value" id="p-fee">£180M</div>
+    </div>
+    <div id="p-pill" class="status-pill pill-breaking">Breaking</div>
+    <div class="divider"></div>
+    <div class="card-footer">
+      <div class="wordmark">BLOCK <span>90'</span></div>
+      <div class="source-tag" id="p-source">Sky Sports</div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
+  <button class="btn btn-primary" onclick="showGuide()">Screenshot Guide</button>
+</div>
+
+<div id="guide" style="display:none;margin-top:16px;background:#111;border:0.5px solid #2E2E2E;border-radius:4px;padding:14px;width:270px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:3px;color:#F4A01C;text-transform:uppercase;margin-bottom:8px;">How to export</div>
+  <div style="font-size:11px;color:#C0BBBA;line-height:1.6;">
+    1. Fill in the fields — preview updates live<br>
+    2. Desktop: DevTools → right-click card → "Screenshot node"<br>
+    3. Or: Cmd+Shift+4 (Mac) / Win+Shift+S (Windows)<br>
+    4. Post to TikTok as image or video cover frame
+  </div>
+</div>
+
+<script>
+  function update() {
+    const fn = document.getElementById('firstName').value.toUpperCase();
+    const ln = document.getElementById('lastName').value.toUpperCase();
+    document.getElementById('p-player').innerHTML = fn + '<br><span style="color:#F4A01C;">' + ln + '</span>';
+    document.getElementById('p-from').textContent = document.getElementById('clubFrom').value;
+    document.getElementById('p-to').textContent = document.getElementById('clubTo').value;
+    document.getElementById('p-fee').textContent = document.getElementById('fee').value;
+    document.getElementById('p-source').textContent = document.getElementById('source').value;
+
+    const status = document.getElementById('status').value;
+    const pill = document.getElementById('p-pill');
+    pill.className = 'status-pill';
+    const map = {
+      rumour: { cls: 'pill-rumour', label: 'Rumour' },
+      breaking: { cls: 'pill-breaking', label: 'Breaking' },
+      official: { cls: 'pill-official', label: 'Official ✓' }
+    };
+    pill.classList.add(map[status].cls);
+    pill.textContent = map[status].label;
+  }
+  function showGuide() { document.getElementById('guide').style.display = 'block'; }
+</script>
+</body>
+</html>

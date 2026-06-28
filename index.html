@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 90' Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0A0A0A;--card:#111;--surface:#161616;--border:#242424;--border2:#2E2E2E;
+  --muted:#3A3A3A;--slate:#5A5A5A;--white:#F0EDE8;
+  --red:#D62828;--hot:#FF3333;--gold:#F4A01C;--green:#1D9E75;--blue:#378ADD;--bronze:#8B6914;
+  --r:4px;
+}
+html,body{height:100%;background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;font-size:14px;overflow:hidden}
+
+/* ── APP GRID ── */
+.app{display:grid;grid-template-columns:1fr 360px;grid-template-rows:56px 1fr;height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{grid-column:1/-1;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);flex-shrink:0}
+.topbar-logo span{color:var(--red)}
+.tb-div{width:1px;height:24px;background:var(--border2)}
+.tb-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--slate)}
+.tb-space{flex:1}
+
+/* mode tabs */
+.mode-tabs{display:flex;gap:2px;background:var(--surface);border-radius:var(--r);padding:3px}
+.mode-tab{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 14px;border-radius:3px;cursor:pointer;border:none;background:transparent;color:var(--slate);transition:all .15s
+}
+.mode-tab.active{background:var(--card);color:var(--white)}
+
+.tb-btn{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  padding:7px 14px;border-radius:var(--r);cursor:pointer;border:none;transition:opacity .15s
+}
+.tb-btn:hover{opacity:.85}
+.btn-export{background:var(--red);color:var(--white)}
+.btn-reset{background:var(--surface);color:var(--slate);border:.5px solid var(--border2)}
+
+/* ── EDITOR ── */
+.editor-panel{background:var(--card);border-right:1px solid var(--border);overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px}
+.editor-panel::-webkit-scrollbar{width:3px}
+.editor-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.section{display:flex;flex-direction:column;gap:10px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--muted);padding-bottom:8px;border-bottom:.5px solid var(--border)}
+
+/* type grid */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.type-pill{padding:8px 4px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--slate);cursor:pointer;text-align:center;transition:all .15s;line-height:1.3}
+.type-pill:hover{border-color:var(--border2);color:var(--white)}
+
+/* fields */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--slate)}
+.field input,.field textarea,.field select{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--r);padding:8px 10px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red)}
+.field textarea{resize:vertical;min-height:64px;line-height:1.5}
+.field select option{background:var(--surface)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hint{font-size:10px;color:var(--muted);font-style:italic;line-height:1.4}
+
+/* toggle */
+.toggle-row{display:flex;align-items:center;gap:10px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:11px;cursor:pointer;transition:background .2s}
+.toggle input:checked+.toggle-track{background:var(--red)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--white);border-radius:50%;transition:transform .2s;pointer-events:none}
+.toggle input:checked~.toggle-thumb{transform:translateX(18px)}
+.toggle-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--slate)}
+
+/* upload */
+.upload-zone{border:1px dashed var(--border2);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;background:var(--surface)}
+.upload-zone:hover{border-color:var(--red)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload-icon{font-size:22px;color:var(--muted);margin-bottom:4px}
+.upload-text{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.upload-zone.loaded{border-color:var(--red)}
+.upload-zone.loaded .upload-text{color:var(--red)}
+
+/* slider */
+.slider-row{display:flex;align-items:center;gap:8px}
+.slider-row input[type=range]{flex:1;accent-color:var(--red)}
+.slider-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red);min-width:32px;text-align:right}
+
+/* swatches */
+.swatch-row{display:flex;gap:6px}
+.swatch{width:26px;height:26px;border-radius:var(--r);cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .1s;flex-shrink:0}
+.swatch:hover{transform:scale(1.1)}
+.swatch.active{border-color:var(--white)}
+
+/* pos grid */
+.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.pos-btn{padding:5px 4px;text-align:center;background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--slate);cursor:pointer;transition:all .15s}
+.pos-btn:hover{border-color:var(--border2);color:var(--white)}
+.pos-btn.active{background:#1A0A0A;border-color:var(--red);color:var(--red)}
+
+/* ── STORY MODE ── */
+.story-header{display:flex;align-items:center;justify-content:space-between}
+.slide-counter{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red)}
+.slide-nav{display:flex;gap:6px}
+.slide-nav button{width:28px;height:28px;border-radius:var(--r);background:var(--surface);border:.5px solid var(--border2);color:var(--white);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.slide-nav button:hover{border-color:var(--red);color:var(--red)}
+.slide-nav button:disabled{opacity:.3;cursor:default}
+
+.slide-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.slide-strip::-webkit-scrollbar{height:3px}
+.slide-strip::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.slide-thumb{
+  flex-shrink:0;width:52px;height:92px;border-radius:3px;background:var(--surface);
+  border:1.5px solid var(--border);cursor:pointer;overflow:hidden;position:relative;
+  transition:border-color .15s;display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:1px;color:var(--slate);
+}
+.slide-thumb.active{border-color:var(--red)}
+.slide-thumb .thumb-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--muted)}
+.slide-thumb .thumb-del{
+  position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:2px;
+  background:var(--red);color:var(--white);font-size:9px;display:none;
+  align-items:center;justify-content:center;cursor:pointer;z-index:10;
+}
+.slide-thumb:hover .thumb-del{display:flex}
+.slide-thumb-add{border-style:dashed;flex-direction:column;gap:2px}
+.slide-thumb-add:hover{border-color:var(--red);color:var(--white)}
+
+.story-paste-area{
+  background:var(--surface);border:.5px solid var(--border2);border-radius:var(--r);
+  padding:12px;font-size:12px;color:var(--slate);line-height:1.5;cursor:pointer;
+  transition:border-color .15s;font-style:italic;min-height:60px;
+  font-family:'Barlow',sans-serif;
+}
+.story-paste-area:focus{outline:none;border-color:var(--red);color:var(--white);font-style:normal}
+
+/* ── PREVIEW PANEL ── */
+.preview-panel{background:#0D0D0D;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;overflow:hidden;position:relative}
+.preview-top{display:flex;align-items:center;gap:10px}
+.preview-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+
+/* slide indicator dots */
+.slide-dots{display:flex;gap:4px}
+.slide-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:all .2s}
+.slide-dot.active{background:var(--red);width:14px;border-radius:3px}
+
+/* phone */
+.phone{width:220px;height:390px;border-radius:6px;overflow:hidden;position:relative;background:var(--black);box-shadow:0 0 0 1px var(--border2);flex-shrink:0}
+.p-photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+.p-overlay{position:absolute;inset:0}
+.p-bar-top{position:absolute;top:0;left:0;right:0;height:3px;z-index:6}
+.p-bar-left{position:absolute;top:0;left:0;bottom:0;width:3px;z-index:6}
+.p-ghost{position:absolute;bottom:-8px;right:-6px;font-family:'Bebas Neue',sans-serif;font-size:120px;color:rgba(214,40,40,.05);line-height:1;letter-spacing:-4px;pointer-events:none;user-select:none;z-index:1}
+.p-content{position:absolute;inset:0;padding:12px 10px 10px;display:flex;flex-direction:column;z-index:5}
+.p-spacer{flex:1}
+.p-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px}
+.p-score-block{margin-bottom:0}
+.p-score-row{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.p-team{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;color:var(--white);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-score-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--white);line-height:1;min-width:18px;text-align:center}
+.p-divider{height:.5px;background:rgba(46,46,46,.6);margin:6px 0}
+.p-headline{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.2;letter-spacing:.3px}
+.p-quote{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:.8;margin-bottom:4px}
+.p-body{font-family:'Barlow',sans-serif;font-size:11px;color:#C0BBBA;line-height:1.5}
+.p-player-first{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);line-height:1;letter-spacing:1px}
+.p-player-last{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);line-height:1;letter-spacing:1px}
+.p-fee-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(20,20,20,.88);border:.5px solid var(--border2);border-radius:2px;padding:3px 8px;margin-top:4px}
+.p-fee-lbl{font-family:'Barlow Condensed',sans-serif;font-size:6px;font-weight:600;letter-spacing:2px;color:var(--slate);text-transform:uppercase}
+.p-fee-val{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);line-height:1}
+.p-pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:1px;font-family:'Barlow Condensed',sans-serif;font-size:6px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-top:4px;width:fit-content}
+.p-footer{display:flex;justify-content:space-between;align-items:center;border-top:.5px solid rgba(46,46,46,.5);padding-top:5px;margin-top:7px}
+.p-wordmark{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--white)}
+.p-wordmark span{color:var(--red)}
+.p-ftag{font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:600;letter-spacing:2px;color:rgba(90,90,90,.8);text-transform:uppercase}
+/* story slide number badge */
+.p-slide-badge{position:absolute;top:10px;right:10px;z-index:7;font-family:'Bebas Neue',sans-serif;font-size:11px;color:rgba(240,237,232,.5);letter-spacing:1px}
+
+/* story quote slide */
+.p-story-quote{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.25;letter-spacing:.3px;flex:1;display:flex;align-items:center}
+
+/* preview nav arrows */
+.preview-nav{display:flex;gap:8px}
+.preview-nav button{width:32px;height:32px;border-radius:var(--r);background:var(--card);border:.5px solid var(--border2);color:var(--white);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.preview-nav button:hover{border-color:var(--red);color:var(--red)}
+.preview-nav button:disabled{opacity:.25;cursor:default}
+
+/* export row */
+.export-row{display:flex;gap:6px;width:100%}
+.exp-btn{flex:1;padding:8px;border-radius:var(--r);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s}
+.exp-btn:hover{opacity:.85}
+.exp-primary{background:var(--red);color:var(--white)}
+.exp-secondary{background:var(--surface);color:var(--slate);border:.5px solid var(--border2)}
+.exp-gold{background:var(--gold);color:var(--black)}
+
+/* toast */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--card);border:1px solid var(--border2);border-radius:var(--r);
+  padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--white);
+  z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1}
+
+/* loading overlay */
+.loading{position:fixed;inset:0;background:rgba(10,10,10,.85);display:none;align-items:center;justify-content:center;z-index:998;flex-direction:column;gap:12px}
+.loading.show{display:flex}
+.loading-text{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--slate)}
+.loading-bar{width:180px;height:2px;background:var(--border2);border-radius:1px;overflow:hidden}
+.loading-fill{height:100%;background:var(--red);border-radius:1px;animation:loadanim 1.2s ease-in-out infinite}
+@keyframes loadanim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-logo">BLOCK <span>90'</span></div>
+  <div class="tb-div"></div>
+  <div class="tb-label">Studio</div>
+  <div class="tb-div"></div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-single" onclick="setMode('single')">Single Post</button>
+    <button class="mode-tab" id="tab-story" onclick="setMode('story')">Story / Thread</button>
+  </div>
+  <div class="tb-space"></div>
+  <button class="tb-btn btn-reset" onclick="resetAll()">Reset</button>
+  <button class="tb-btn btn-export" onclick="exportCurrent()">⬇ Export PNG</button>
+</header>
+
+<!-- EDITOR -->
+<main class="editor-panel" id="editorPanel">
+
+  <!-- ══ SINGLE MODE ══ -->
+  <div id="mode-single">
+
+    <!-- TYPE -->
+    <div class="section">
+      <div class="sec-title">01 — Post Type</div>
+      <div class="type-grid">
+        <div class="type-pill active" style="background:#1A0A0A;border-color:#D62828;color:#D62828" data-type="match" onclick="setType('match',this)">⚽ Match<br>Reaction</div>
+        <div class="type-pill" data-type="take" onclick="setType('take',this)">🔥 Hot<br>Take</div>
+        <div class="type-pill" data-type="transfer" onclick="setType('transfer',this)">💰 Transfer<br>News</div>
+        <div class="type-pill" data-type="tactics" onclick="setType('tactics',this)">📐 Tactical<br>Post</div>
+        <div class="type-pill" data-type="stats" onclick="setType('stats',this)">📊 Stats<br>& Data</div>
+        <div class="type-pill" data-type="culture" onclick="setType('culture',this)">🏆 Football<br>Culture</div>
+      </div>
+    </div>
+
+    <!-- ACCENT -->
+    <div class="section">
+      <div class="sec-title">02 — Accent Colour</div>
+      <div class="swatch-row">
+        <div class="swatch active" style="background:#D62828" title="Bloc Red"    onclick="setAccent('#D62828','top',this)"></div>
+        <div class="swatch"        style="background:#FF3333" title="Hot Red"     onclick="setAccent('#FF3333','left',this)"></div>
+        <div class="swatch"        style="background:#F4A01C" title="Pitch Gold"  onclick="setAccent('#F4A01C','top',this)"></div>
+        <div class="swatch"        style="background:#1D9E75" title="Pitch Green" onclick="setAccent('#1D9E75','left',this)"></div>
+        <div class="swatch"        style="background:#378ADD" title="Data Blue"   onclick="setAccent('#378ADD','left',this)"></div>
+        <div class="swatch"        style="background:#8B6914" title="Bronze"      onclick="setAccent('#8B6914','left',this)"></div>
+      </div>
+    </div>
+
+    <!-- CONTENT FIELDS -->
+    <div class="section">
+      <div class="sec-title">03 — Content</div>
+
+      <div id="fields-match">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Competition & Matchday</label><input id="m-eyebrow" value="Premier League · Matchday 34" oninput="render()"></div>
+          <div class="field"><label>Home Team</label><input id="m-home" value="Arsenal" oninput="render()"></div>
+          <div class="field"><label>Away Team</label><input id="m-away" value="Chelsea" oninput="render()"></div>
+          <div class="row2">
+            <div class="field"><label>Home Score</label><input id="m-sh" type="number" value="3" min="0" oninput="render()"></div>
+            <div class="field"><label>Away Score</label><input id="m-sa" type="number" value="1" min="0" oninput="render()"></div>
+          </div>
+          <div class="field"><label>Reaction Headline</label><textarea id="m-text" oninput="render()">Saka with a brace and Arsenal never looked back.</textarea></div>
+          <div class="field"><label>Highlight Word (red)</label><input id="m-hl" value="brace" oninput="render()"></div>
+          <div class="field"><label>Status</label>
+            <select id="m-status" onchange="render()">
+              <option>Full Time</option><option>Live</option><option>Half Time</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="fields-take" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Statement</label><textarea id="t-text" oninput="render()">Ronaldo is not a top 5 player of all time. The numbers don't lie.</textarea></div>
+          <div class="field"><label>Highlight Phrase (gold)</label><input id="t-hl" value="top 5" oninput="render()"></div>
+          <div class="field"><label>Call to Action</label><input id="t-cta" value="Agree or nah? ↓" oninput="render()"></div>
+        </div>
+      </div>
+
+      <div id="fields-transfer" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="row2">
+            <div class="field"><label>First Name</label><input id="tr-first" value="Florian" oninput="render()"></div>
+            <div class="field"><label>Last Name</label><input id="tr-last" value="Wirtz" oninput="render()"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>From Club</label><input id="tr-from" value="Leverkusen" oninput="render()"></div>
+            <div class="field"><label>To Club</label><input id="tr-to" value="Liverpool" oninput="render()"></div>
+          </div>
+          <div class="field"><label>Reported Fee</label><input id="tr-fee" value="£105M" oninput="render()"></div>
+          <div class="field"><label>Status</label>
+            <select id="tr-status" onchange="render()">
+              <option>Rumour</option><option>Breaking</option><option selected>Official</option>
+            </select>
+          </div>
+          <div class="field"><label>Source</label><input id="tr-source" value="Fabrizio Romano" oninput="render()"></div>
+        </div>
+      </div>
+
+      <div id="fields-tactics" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Eyebrow</label><input id="tc-eyebrow" value="Tactical Breakdown" oninput="render()"></div>
+          <div class="field"><label>Headline</label><textarea id="tc-text" oninput="render()">Why the 4-3-3 is Destroying High Blocks</textarea></div>
+          <div class="field"><label>Highlight Word</label><input id="tc-hl" value="4-3-3" oninput="render()"></div>
+          <div class="field"><label>Key Point 1</label><input id="tc-p1" value="Wide forwards stretch the block open" oninput="render()"></div>
+          <div class="field"><label>Key Point 2</label><input id="tc-p2" value="The 8 and 10 arrive late into pockets" oninput="render()"></div>
+        </div>
+      </div>
+
+      <div id="fields-stats" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Headline</label><input id="st-title" value="Most PL Goals Ever" oninput="render()"></div>
+          <div class="field"><label>#1 Name</label><input id="st-n1" value="Alan Shearer" oninput="render()"></div>
+          <div class="field"><label>#1 Value</label><input id="st-v1" value="260" oninput="render()"></div>
+          <div class="field"><label>#2 Name</label><input id="st-n2" value="Wayne Rooney" oninput="render()"></div>
+          <div class="field"><label>#2 Value</label><input id="st-v2" value="208" oninput="render()"></div>
+          <div class="field"><label>#3 Name</label><input id="st-n3" value="Andrew Cole" oninput="render()"></div>
+          <div class="field"><label>#3 Value</label><input id="st-v3" value="187" oninput="render()"></div>
+        </div>
+      </div>
+
+      <div id="fields-culture" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Eyebrow</label><input id="cu-eyebrow" value="Football Culture" oninput="render()"></div>
+          <div class="field"><label>Headline</label><textarea id="cu-text" oninput="render()">The last player who made the entire world stop and watch.</textarea></div>
+          <div class="field"><label>Highlight Word (bronze)</label><input id="cu-hl" value="stop" oninput="render()"></div>
+          <div class="field"><label>Era / Year</label><input id="cu-era" value="2004–2006" oninput="render()"></div>
+          <div class="field"><label>Footer Tag</label><input id="cu-tag" value="#Throwback" oninput="render()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO -->
+    <div class="section">
+      <div class="sec-title">04 — Photo</div>
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="photoToggle" onchange="togglePhoto()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-lbl">Background photo</span>
+      </div>
+      <div id="photo-controls" style="display:none;flex-direction:column;gap:10px;margin-top:4px">
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="photoInput" onchange="loadPhoto(event)">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Upload photo</div>
+        </div>
+        <div class="field">
+          <label>Photo Focus</label>
+          <div class="pos-grid">
+            <div class="pos-btn" onclick="setPos('top left',this)">Top L</div>
+            <div class="pos-btn active" onclick="setPos('top center',this)">Top C</div>
+            <div class="pos-btn" onclick="setPos('top right',this)">Top R</div>
+            <div class="pos-btn" onclick="setPos('center left',this)">Mid L</div>
+            <div class="pos-btn" onclick="setPos('center',this)">Center</div>
+            <div class="pos-btn" onclick="setPos('center right',this)">Mid R</div>
+            <div class="pos-btn" onclick="setPos('bottom left',this)">Bot L</div>
+            <div class="pos-btn" onclick="setPos('bottom center',this)">Bot C</div>
+            <div class="pos-btn" onclick="setPos('bottom right',this)">Bot R</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Overlay Darkness</label>
+          <div class="slider-row">
+            <span style="font-size:9px;color:var(--muted)">Light</span>
+            <input type="range" min="20" max="95" value="60" id="overlaySlider" oninput="updateOverlay(this.value)">
+            <span style="font-size:9px;color:var(--muted)">Dark</span>
+            <span class="slider-val" id="overlayVal">60%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /mode-single -->
+
+  <!-- ══ STORY MODE ══ -->
+  <div id="mode-story" style="display:none">
+
+    <!-- SLIDE MANAGER -->
+    <div class="section">
+      <div class="sec-title">Slides</div>
+      <div class="story-header">
+        <div class="slide-counter"><span id="slideNum">1</span> / <span id="slideTotal">1</span></div>
+        <div class="slide-nav">
+          <button onclick="moveSlide(-1)" id="slidePrev" title="Previous">‹</button>
+          <button onclick="moveSlide(1)" id="slideNext" title="Next">›</button>
+          <button onclick="addSlide()" title="Add slide" style="background:var(--red);border-color:var(--red)">+</button>
+        </div>
+      </div>
+      <div class="slide-strip" id="slideStrip"></div>
+    </div>
+
+    <!-- STORY TEMPLATE TYPE -->
+    <div class="section">
+      <div class="sec-title">Slide Type</div>
+      <div class="type-grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="type-pill active" id="stype-quote" style="background:#1A0A0A;border-color:#D62828;color:#D62828" onclick="setSlideType('quote',this)">💬 Quote /<br>Statement</div>
+        <div class="type-pill" id="stype-story" onclick="setSlideType('story',this)">📰 Story<br>Paragraph</div>
+        <div class="type-pill" id="stype-playerquote" onclick="setSlideType('playerquote',this)">🎤 Player<br>Quote</div>
+        <div class="type-pill" id="stype-headline" onclick="setSlideType('headline',this)">📢 Cover /<br>Headline</div>
+      </div>
+    </div>
+
+    <!-- PASTE YOUR STORY -->
+    <div class="section">
+      <div class="sec-title">Quick Import — Paste Full Story</div>
+      <div class="hint" style="margin-bottom:6px">Paste your full text below. Each paragraph becomes a slide automatically.</div>
+      <div contenteditable="true" class="story-paste-area" id="storyPasteArea" 
+           placeholder="Paste your story, article, or quotes here..."
+           onfocus="this.style.fontStyle='normal';if(this.dataset.empty)this.textContent=''"
+           onblur="if(!this.textContent.trim()){this.style.fontStyle='italic';this.dataset.empty=true}"
+           oninput="onPasteInput(this)">Paste your story or quotes here. Each paragraph = one slide.</div>
+      <button onclick="importStory()" style="background:var(--red);color:var(--white);border:none;border-radius:var(--r);padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:6px">Split into Slides →</button>
+    </div>
+
+    <!-- CURRENT SLIDE CONTENT -->
+    <div class="section">
+      <div class="sec-title">Current Slide Content</div>
+      <div id="story-fields">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label>Eyebrow / Label</label><input id="s-eyebrow" value="Block 90' · Story" oninput="saveAndRender()"></div>
+          <div class="field"><label>Main Text</label><textarea id="s-text" style="min-height:100px" oninput="saveAndRender()">Paste or type your slide text here.</textarea></div>
+          <div class="field"><label>Attribution (for player quotes)</label><input id="s-attr" value="" placeholder="e.g. — Virgil van Dijk" oninput="saveAndRender()"></div>
+          <div class="field"><label>Highlight Word (red)</label><input id="s-hl" value="" oninput="saveAndRender()"></div>
+          <div class="row2">
+            <div class="field"><label>Slide Accent</label>
+              <div class="swatch-row" style="flex-wrap:wrap">
+                <div class="swatch active" style="background:#D62828" onclick="setSlideAccent('#D62828',this)"></div>
+                <div class="swatch" style="background:#F4A01C" onclick="setSlideAccent('#F4A01C',this)"></div>
+                <div class="swatch" style="background:#1D9E75" onclick="setSlideAccent('#1D9E75',this)"></div>
+                <div class="swatch" style="background:#378ADD" onclick="setSlideAccent('#378ADD',this)"></div>
+                <div class="swatch" style="background:#8B6914" onclick="setSlideAccent('#8B6914',this)"></div>
+              </div>
+            </div>
+            <div class="field"><label>Footer Tag</label><input id="s-tag" value="#Block90" oninput="saveAndRender()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY PHOTO -->
+    <div class="section">
+      <div class="sec-title">Slide Photo</div>
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="storyPhotoToggle" onchange="toggleStoryPhoto()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-lbl">Background photo for this slide</span>
+      </div>
+      <div id="story-photo-controls" style="display:none;flex-direction:column;gap:10px;margin-top:4px">
+        <div class="upload-zone" id="storyUploadZone">
+          <input type="file" accept="image/*" id="storyPhotoInput" onchange="loadStoryPhoto(event)">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Upload photo for this slide</div>
+        </div>
+        <div class="field">
+          <label>Overlay Darkness</label>
+          <div class="slider-row">
+            <span style="font-size:9px;color:var(--muted)">Light</span>
+            <input type="range" min="20" max="95" value="65" id="storyOverlaySlider" oninput="updateStoryOverlay(this.value)">
+            <span style="font-size:9px;color:var(--muted)">Dark</span>
+            <span class="slider-val" id="storyOverlayVal">65%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /mode-story -->
+
+</main>
+
+<!-- PREVIEW -->
+<aside class="preview-panel">
+  <div class="preview-top">
+    <div class="preview-label">Live Preview · 9:16</div>
+  </div>
+  <div id="slideDotsWrap" style="display:none"><div class="slide-dots" id="slideDots"></div></div>
+
+  <div class="phone" id="previewCard">
+    <div class="p-photo" id="pPhoto"></div>
+    <div class="p-overlay" id="pOverlay" style="display:none"></div>
+    <div class="p-bar-top" id="pBarTop" style="background:#D62828"></div>
+    <div class="p-bar-left" id="pBarLeft" style="background:#D62828;display:none"></div>
+    <div class="p-ghost" id="pGhost">90</div>
+    <div class="p-slide-badge" id="pSlideBadge" style="display:none"></div>
+    <div class="p-content" id="pContent"></div>
+  </div>
+
+  <div class="preview-nav" id="previewNav" style="display:none">
+    <button onclick="previewPrev()" id="pprev">‹</button>
+    <button onclick="previewNext()" id="pnext">›</button>
+  </div>
+
+  <div class="export-row">
+    <button class="exp-btn exp-secondary" onclick="exportCurrent()">⬇ This Slide</button>
+    <button class="exp-btn exp-gold" id="exportAllBtn" onclick="exportAll()" style="display:none">⬇ All Slides</button>
+  </div>
+</aside>
+
+</div><!-- /app -->
+
+<!-- LOADING -->
+<div class="loading" id="loadingOverlay">
+  <div class="loading-text" id="loadingText">Exporting...</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let appMode = 'single';
+let singleState = {
+  type:'match', accent:'#D62828', barSide:'top',
+  photo:false, photoUrl:null, photoPos:'top center', overlay:60
+};
+// Story slides: array of slide objects
+let slides = [defaultSlide()];
+let currentSlide = 0;
+
+function defaultSlide(){
+  return {
+    type:'quote', accent:'#D62828',
+    eyebrow:'Block 90\' · Story', text:'', attr:'', hl:'', tag:'#Block90',
+    photo:false, photoUrl:null, overlay:65
+  };
+}
+
+const typeMap = {
+  match:{accent:'#D62828',bar:'top'}, take:{accent:'#FF3333',bar:'left'},
+  transfer:{accent:'#F4A01C',bar:'top'}, tactics:{accent:'#1D9E75',bar:'left'},
+  stats:{accent:'#378ADD',bar:'left'}, culture:{accent:'#8B6914',bar:'left'}
+};
+
+// ══════════════════════════════════════════
+// MODE
+// ══════════════════════════════════════════
+function setMode(m){
+  appMode = m;
+  document.getElementById('mode-single').style.display = m==='single'?'flex':'none';
+  if(m==='single') document.getElementById('mode-single').style.flexDirection='column';
+  document.getElementById('mode-story').style.display  = m==='story'?'block':'none';
+  document.getElementById('tab-single').classList.toggle('active',m==='single');
+  document.getElementById('tab-story').classList.toggle('active',m==='story');
+  document.getElementById('previewNav').style.display = m==='story'?'flex':'none';
+  document.getElementById('slideDotsWrap').style.display = m==='story'?'block':'none';
+  document.getElementById('exportAllBtn').style.display = m==='story'?'flex':'none';
+  document.getElementById('pSlideBadge').style.display = m==='story'?'block':'none';
+  if(m==='story'){ buildSlideStrip(); renderStory(); }
+  else render();
+}
+
+// ══════════════════════════════════════════
+// SINGLE MODE
+// ══════════════════════════════════════════
+function setType(type, el){
+  singleState.type = type;
+  document.querySelectorAll('.type-pill').forEach(p=>{
+    if(p.closest('#mode-single')){p.classList.remove('active');p.style.background='';p.style.borderColor='';p.style.color='';}
+  });
+  el.classList.add('active');
+  const c = typeMap[type];
+  el.style.background = c.accent+'22'; el.style.borderColor = c.accent; el.style.color = c.accent;
+  singleState.accent = c.accent; singleState.barSide = c.bar;
+  document.querySelectorAll('#mode-single .swatch').forEach(s=>{
+    s.classList.toggle('active', s.style.background===c.accent);
+  });
+  ['match','take','transfer','tactics','stats','culture'].forEach(t=>{
+    document.getElementById('fields-'+t).style.display = t===type?'block':'none';
+  });
+  render();
+}
+
+function setAccent(color,bar,el){
+  singleState.accent=color; singleState.barSide=bar;
+  document.querySelectorAll('#mode-single .swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active'); render();
+}
+
+function togglePhoto(){
+  singleState.photo = document.getElementById('photoToggle').checked;
+  document.getElementById('photo-controls').style.display = singleState.photo?'flex':'none';
+  render();
+}
+
+function loadPhoto(e){
+  const f=e.target.files[0]; if(!f)return;
+  singleState.photoUrl = URL.createObjectURL(f);
+  document.getElementById('uploadZone').classList.add('loaded');
+  document.querySelector('#uploadZone .upload-text').textContent=f.name;
+  render();
+}
+
+function setPos(pos,el){
+  singleState.photoPos=pos;
+  document.getElementById('pPhoto').style.backgroundPosition=pos;
+  document.querySelectorAll('#mode-single .pos-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function updateOverlay(v){
+  singleState.overlay=v; document.getElementById('overlayVal').textContent=v+'%'; applyOverlayFromState();
+}
+
+// ══════════════════════════════════════════
+// STORY MODE
+// ══════════════════════════════════════════
+function setSlideType(type,el){
+  slides[currentSlide].type=type;
+  document.querySelectorAll('#mode-story .type-pill').forEach(p=>{p.classList.remove('active');p.style.background='';p.style.borderColor='';p.style.color='';});
+  el.classList.add('active'); el.style.background='#1A0A0A'; el.style.borderColor='#D62828'; el.style.color='#D62828';
+  renderStory();
+}
+
+function setSlideAccent(color,el){
+  slides[currentSlide].accent=color;
+  document.querySelectorAll('#story-fields .swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active'); renderStory();
+}
+
+function addSlide(){
+  const s = defaultSlide();
+  s.eyebrow = slides[currentSlide]?.eyebrow || 'Block 90\' · Story';
+  s.tag = slides[currentSlide]?.tag || '#Block90';
+  slides.push(s); currentSlide=slides.length-1;
+  buildSlideStrip(); loadSlideFields(); renderStory();
+}
+
+function deleteSlide(i,ev){
+  ev.stopPropagation();
+  if(slides.length===1){toast('Need at least one slide');return;}
+  slides.splice(i,1);
+  if(currentSlide>=slides.length) currentSlide=slides.length-1;
+  buildSlideStrip(); loadSlideFields(); renderStory();
+}
+
+function goToSlide(i){
+  currentSlide=i; buildSlideStrip(); loadSlideFields(); renderStory();
+}
+
+function moveSlide(dir){
+  const n=currentSlide+dir;
+  if(n<0||n>=slides.length)return;
+  currentSlide=n; buildSlideStrip(); loadSlideFields(); renderStory();
+}
+
+function previewPrev(){ moveSlide(-1); }
+function previewNext(){ moveSlide(1); }
+
+function buildSlideStrip(){
+  const strip=document.getElementById('slideStrip');
+  strip.innerHTML='';
+  slides.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='slide-thumb'+(i===currentSlide?' active':'');
+    d.onclick=()=>goToSlide(i);
+    d.innerHTML=`
+      <div class="thumb-num">${i+1}</div>
+      <div class="thumb-del" onclick="deleteSlide(${i},event)">×</div>`;
+    d.style.borderColor = i===currentSlide ? s.accent : '';
+    strip.appendChild(d);
+  });
+  // add button
+  const add=document.createElement('div');
+  add.className='slide-thumb slide-thumb-add';
+  add.onclick=addSlide;
+  add.innerHTML='<span style="font-size:18px;color:var(--muted)">+</span><span style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Add</span>';
+  strip.appendChild(add);
+
+  document.getElementById('slideNum').textContent=currentSlide+1;
+  document.getElementById('slideTotal').textContent=slides.length;
+  document.getElementById('slidePrev').disabled=currentSlide===0;
+  document.getElementById('slideNext').disabled=currentSlide===slides.length-1;
+
+  // dots
+  const dots=document.getElementById('slideDots');
+  dots.innerHTML=slides.map((_,i)=>`<div class="slide-dot${i===currentSlide?' active':''}"></div>`).join('');
+
+  document.getElementById('pprev').disabled=currentSlide===0;
+  document.getElementById('pnext').disabled=currentSlide===slides.length-1;
+}
+
+function loadSlideFields(){
+  const s=slides[currentSlide];
+  document.getElementById('s-eyebrow').value=s.eyebrow||'';
+  document.getElementById('s-text').value=s.text||'';
+  document.getElementById('s-attr').value=s.attr||'';
+  document.getElementById('s-hl').value=s.hl||'';
+  document.getElementById('s-tag').value=s.tag||'';
+  // set type pills
+  document.querySelectorAll('#mode-story .type-pill').forEach(p=>{
+    const active=(p.id==='stype-'+s.type);
+    p.classList.toggle('active',active);
+    p.style.background=active?'#1A0A0A':'';
+    p.style.borderColor=active?'#D62828':'';
+    p.style.color=active?'#D62828':'';
+  });
+  // accent swatches
+  document.querySelectorAll('#story-fields .swatch').forEach(sw=>{
+    sw.classList.toggle('active',sw.style.background===s.accent);
+  });
+  // photo toggle
+  document.getElementById('storyPhotoToggle').checked=s.photo;
+  document.getElementById('story-photo-controls').style.display=s.photo?'flex':'none';
+  document.getElementById('storyOverlaySlider').value=s.overlay||65;
+  document.getElementById('storyOverlayVal').textContent=(s.overlay||65)+'%';
+  if(s.photo&&s.photoUrl){
+    document.getElementById('storyUploadZone').classList.add('loaded');
+    document.querySelector('#storyUploadZone .upload-text').textContent='Photo loaded';
+  } else {
+    document.getElementById('storyUploadZone').classList.remove('loaded');
+    document.querySelector('#storyUploadZone .upload-text').textContent='Upload photo for this slide';
+  }
+}
+
+function saveAndRender(){
+  const s=slides[currentSlide];
+  s.eyebrow=document.getElementById('s-eyebrow').value;
+  s.text=document.getElementById('s-text').value;
+  s.attr=document.getElementById('s-attr').value;
+  s.hl=document.getElementById('s-hl').value;
+  s.tag=document.getElementById('s-tag').value;
+  renderStory();
+}
+
+function toggleStoryPhoto(){
+  slides[currentSlide].photo=document.getElementById('storyPhotoToggle').checked;
+  document.getElementById('story-photo-controls').style.display=slides[currentSlide].photo?'flex':'none';
+  renderStory();
+}
+
+function loadStoryPhoto(e){
+  const f=e.target.files[0]; if(!f)return;
+  slides[currentSlide].photoUrl=URL.createObjectURL(f);
+  document.getElementById('storyUploadZone').classList.add('loaded');
+  document.querySelector('#storyUploadZone .upload-text').textContent=f.name;
+  renderStory();
+}
+
+function updateStoryOverlay(v){
+  slides[currentSlide].overlay=parseInt(v);
+  document.getElementById('storyOverlayVal').textContent=v+'%';
+  renderStory();
+}
+
+function onPasteInput(el){ el.dataset.empty=''; }
+
+function importStory(){
+  const raw=document.getElementById('storyPasteArea').textContent.trim();
+  if(!raw){toast('Nothing to import');return;}
+  const paras=raw.split(/\n\s*\n/).map(p=>p.replace(/\n/g,' ').trim()).filter(p=>p.length>2);
+  if(!paras.length){toast('No paragraphs found');return;}
+  const base={eyebrow:slides[0]?.eyebrow||'Block 90\' · Story',tag:slides[0]?.tag||'#Block90'};
+  slides=paras.map((p,i)=>{
+    const s=defaultSlide();
+    s.eyebrow=base.eyebrow; s.tag=base.tag;
+    s.text=p;
+    // auto-detect player quote
+    if(p.startsWith('"')||p.startsWith('\u201C')) s.type='playerquote';
+    return s;
+  });
+  currentSlide=0;
+  buildSlideStrip(); loadSlideFields(); renderStory();
+  toast(`${paras.length} slides created`);
+  document.getElementById('storyPasteArea').textContent='Paste your story or quotes here. Each paragraph = one slide.';
+  document.getElementById('storyPasteArea').style.fontStyle='italic';
+  document.getElementById('storyPasteArea').dataset.empty='1';
+}
+
+// ══════════════════════════════════════════
+// SHARED RENDER HELPERS
+// ══════════════════════════════════════════
+function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function hl(text,word,color){
+  if(!word)return e(text);
+  const rx=new RegExp('('+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return e(text).replace(rx,`<span style="color:${color}">$1</span>`);
+}
+
+function applyPhotoToPreview(photoUrl, photoPos, overlay, active){
+  const photo=document.getElementById('pPhoto');
+  const ov=document.getElementById('pOverlay');
+  const ghost=document.getElementById('pGhost');
+  if(active&&photoUrl){
+    photo.style.backgroundImage=`url('${photoUrl}')`;
+    photo.style.backgroundPosition=photoPos||'top center';
+    ov.style.display='block';
+    const v=overlay/100;
+    ov.style.background=`linear-gradient(to bottom,rgba(10,10,10,${(v*.22).toFixed(2)}) 0%,rgba(10,10,10,${(v*.50).toFixed(2)}) 40%,rgba(10,10,10,${(v*.88).toFixed(2)}) 68%,rgba(10,10,10,${Math.min(v*1.05,.98).toFixed(2)}) 100%)`;
+    ghost.style.display='none';
+  } else {
+    photo.style.backgroundImage='';
+    ov.style.display='none';
+    ghost.style.display='block';
+  }
+}
+
+function applyOverlayFromState(){
+  applyPhotoToPreview(singleState.photoUrl,singleState.photoPos,singleState.overlay,singleState.photo&&!!singleState.photoUrl);
+}
+
+function setBars(accent,side){
+  const top=document.getElementById('pBarTop');
+  const left=document.getElementById('pBarLeft');
+  if(side==='top'){top.style.display='block';top.style.background=accent;left.style.display='none';}
+  else{left.style.display='block';left.style.background=accent;top.style.display='none';}
+}
+
+// ══════════════════════════════════════════
+// SINGLE RENDER
+// ══════════════════════════════════════════
+function render(){
+  if(appMode!=='single')return;
+  const st=singleState;
+  setBars(st.accent,st.barSide);
+  applyPhotoToPreview(st.photoUrl,st.photoPos,st.overlay,st.photo&&!!st.photoUrl);
+  document.getElementById('pSlideBadge').style.display='none';
+
+  const content=document.getElementById('pContent');
+  const a=st.accent;
+  let html='';
+
+  if(st.type==='match'){
+    const sc={'Full Time':'#5A5A5A','Live':'#FF3333','Half Time':'#F4A01C'};
+    const statusColor=sc[document.getElementById('m-status').value]||'#5A5A5A';
+    html=`
+      <div class="p-eyebrow" style="color:#F4A01C">${e(document.getElementById('m-eyebrow').value)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-headline" style="margin-bottom:10px">${hl(document.getElementById('m-text').value,document.getElementById('m-hl').value,'#D62828')}</div>
+      <div class="p-divider"></div>
+      <div class="p-score-block">
+        <div class="p-score-row"><div class="p-team">${e(document.getElementById('m-home').value)}</div><div class="p-score-num">${e(document.getElementById('m-sh').value)}</div></div>
+        <div class="p-score-row"><div class="p-team">${e(document.getElementById('m-away').value)}</div><div class="p-score-num">${e(document.getElementById('m-sa').value)}</div></div>
+      </div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag" style="color:${statusColor}">${e(document.getElementById('m-status').value)}</div></div>`;
+  } else if(st.type==='take'){
+    html=`
+      <div style="display:inline-flex;background:#D62828;padding:2px 7px;border-radius:1px;font-family:'Barlow Condensed',sans-serif;font-size:6px;font-weight:600;letter-spacing:2px;color:#F0EDE8;text-transform:uppercase;margin-bottom:6px">Hot Take</div>
+      <div class="p-quote" style="color:${a}">"</div>
+      <div class="p-headline" style="font-size:16px">${hl(document.getElementById('t-text').value,document.getElementById('t-hl').value,'#F4A01C')}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(document.getElementById('t-cta').value)}</div></div>`;
+  } else if(st.type==='transfer'){
+    const status=document.getElementById('tr-status').value;
+    const ps=status==='Breaking'?'background:#D62828;color:#F0EDE8':status==='Official'?'background:#F4A01C;color:#0A0A0A':'border:.5px solid #2E2E2E;color:#5A5A5A';
+    html=`
+      <div class="p-eyebrow" style="color:#F4A01C">Transfer Update</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#5A5A5A">${e(document.getElementById('tr-from').value)}</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#D62828">→</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#F0EDE8">${e(document.getElementById('tr-to').value)}</span>
+      </div>
+      <div class="p-player-first">${e(document.getElementById('tr-first').value.toUpperCase())}</div>
+      <div class="p-player-last">${e(document.getElementById('tr-last').value.toUpperCase())}</div>
+      <div class="p-fee-pill"><div class="p-fee-lbl">Fee</div><div class="p-fee-val">${e(document.getElementById('tr-fee').value)}</div></div>
+      <div class="p-pill" style="${ps}">${e(status)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(document.getElementById('tr-source').value)}</div></div>`;
+  } else if(st.type==='tactics'){
+    html=`
+      <div class="p-eyebrow" style="color:#F4A01C">${e(document.getElementById('tc-eyebrow').value)}</div>
+      <div class="p-headline" style="font-size:13px">${hl(document.getElementById('tc-text').value,document.getElementById('tc-hl').value,'#D62828')}</div>
+      <div class="p-spacer"></div>
+      <div style="background:#0D1A0F;border:.5px solid #1A3020;border-radius:2px;padding:8px 6px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-around;margin-bottom:6px">${[1,2,3,4].map(()=>'<div style="width:12px;height:12px;border-radius:50%;border:1px solid #5A5A5A"></div>').join('')}</div>
+        <div style="height:.5px;background:#1A3020;margin:4px 0"></div>
+        <div style="display:flex;justify-content:space-around;margin-top:6px">${['W','9','W'].map(l=>`<div style="width:14px;height:14px;border-radius:50%;background:#D62828;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:6px;color:#F0EDE8">${l}</div>`).join('')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;gap:5px;align-items:flex-start"><span style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:#D62828;flex-shrink:0">01</span><span style="font-size:9px;color:#C0BBBA;line-height:1.35">${e(document.getElementById('tc-p1').value)}</span></div>
+        <div style="display:flex;gap:5px;align-items:flex-start"><span style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:#D62828;flex-shrink:0">02</span><span style="font-size:9px;color:#C0BBBA;line-height:1.35">${e(document.getElementById('tc-p2').value)}</span></div>
+      </div>
+      <div class="p-footer" style="margin-top:8px"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">#Tactics</div></div>`;
+  } else if(st.type==='stats'){
+    const names=['st-n1','st-n2','st-n3'].map(id=>document.getElementById(id).value);
+    const vals=['st-v1','st-v2','st-v3'].map(id=>parseInt(document.getElementById(id).value)||0);
+    const max=Math.max(...vals,1);
+    const bars=names.map((n,i)=>`
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:11px;color:#378ADD;min-width:12px">${i+1}</span>
+        <div style="flex:1">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:${i===0?'#F0EDE8':'#5A5A5A'};margin-bottom:2px">${e(n)}</div>
+          <div style="height:5px;background:#0C2E5A;border-radius:1px;overflow:hidden"><div style="height:100%;width:${Math.round(vals[i]/max*100)}%;background:#378ADD;border-radius:1px"></div></div>
+        </div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#F0EDE8;min-width:28px;text-align:right">${vals[i]}</span>
+      </div>`).join('');
+    html=`
+      <div class="p-eyebrow" style="color:#378ADD">Stats</div>
+      <div class="p-headline" style="font-size:13px;margin-bottom:10px">${e(document.getElementById('st-title').value)}</div>
+      ${bars}
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">#Stats</div></div>`;
+  } else if(st.type==='culture'){
+    html=`
+      <div class="p-eyebrow" style="color:#8B6914">${e(document.getElementById('cu-eyebrow').value)}</div>
+      <div class="p-spacer"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:rgba(139,105,20,0.1);line-height:1;position:absolute;bottom:60px;right:8px;pointer-events:none">${e(document.getElementById('cu-era').value)}</div>
+      <div class="p-headline" style="font-size:16px">${hl(document.getElementById('cu-text').value,document.getElementById('cu-hl').value,'#8B6914')}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(document.getElementById('cu-tag').value)}</div></div>`;
+  }
+  content.innerHTML=html;
+}
+
+// ══════════════════════════════════════════
+// STORY RENDER
+// ══════════════════════════════════════════
+function renderStory(){
+  if(appMode!=='story')return;
+  const s=slides[currentSlide];
+  setBars(s.accent,'left');
+  applyPhotoToPreview(s.photoUrl,null,s.overlay,s.photo&&!!s.photoUrl);
+
+  const badge=document.getElementById('pSlideBadge');
+  badge.style.display='block';
+  badge.textContent=`${currentSlide+1}/${slides.length}`;
+
+  const content=document.getElementById('pContent');
+  const a=s.accent;
+  let html='';
+
+  if(s.type==='quote'){
+    html=`
+      <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-quote" style="color:${a}">"</div>
+      <div class="p-story-quote">${hl(s.text,s.hl,'#D62828')}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
+  } else if(s.type==='story'){
+    html=`
+      <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-body">${hl(s.text,s.hl,'#D62828')}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
+  } else if(s.type==='playerquote'){
+    const clean=s.text.replace(/^["\u201C\u2018]/,'').replace(/["\u201D\u2019]$/,'');
+    html=`
+      <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-quote" style="color:${a}">"</div>
+      <div class="p-story-quote" style="font-style:italic;font-size:16px">${hl(clean,s.hl,'#D62828')}</div>
+      ${s.attr?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;color:${a};text-transform:uppercase;margin-top:8px">${e(s.attr)}</div>`:''}
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
+  } else if(s.type==='headline'){
+    html=`
+      <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-headline" style="font-size:22px;line-height:1.15">${hl(s.text,s.hl,a)}</div>
+      <div class="p-spacer"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
+  }
+  content.innerHTML=html;
+  buildSlideStrip();
+}
+
+// ══════════════════════════════════════════
+// EXPORT — HIGH QUALITY PNG via html2canvas
+// ══════════════════════════════════════════
+async function captureCard(scale=4){
+  const card=document.getElementById('previewCard');
+  return await html2canvas(card,{
+    scale:scale,
+    useCORS:true,
+    allowTaint:true,
+    backgroundColor:'#0A0A0A',
+    logging:false,
+    imageTimeout:15000
+  });
+}
+
+async function exportCurrent(){
+  showLoading('Exporting slide...');
+  try {
+    const canvas=await captureCard(4);
+    download(canvas, `block90_${appMode==='story'?'slide'+(currentSlide+1):'post'}_${Date.now()}.png`);
+    toast('Exported — 1080×1920px PNG');
+  } catch(err){ toast('Export failed — try again'); }
+  hideLoading();
+}
+
+async function exportAll(){
+  if(appMode!=='story'){exportCurrent();return;}
+  const total=slides.length;
+  showLoading(`Exporting slide 1 of ${total}...`);
+  const origSlide=currentSlide;
+  for(let i=0;i<total;i++){
+    document.getElementById('loadingText').textContent=`Exporting slide ${i+1} of ${total}...`;
+    currentSlide=i; loadSlideFields(); renderStory();
+    await new Promise(r=>setTimeout(r,120)); // let DOM settle
+    try {
+      const canvas=await captureCard(4);
+      download(canvas,`block90_slide${String(i+1).padStart(2,'0')}_of${total}.png`);
+      await new Promise(r=>setTimeout(r,80));
+    } catch(e){}
+  }
+  currentSlide=origSlide; loadSlideFields(); renderStory();
+  hideLoading();
+  toast(`${total} slides exported`);
+}
+
+function download(canvas,name){
+  const a=document.createElement('a');
+  a.download=name;
+  a.href=canvas.toDataURL('image/png',1.0);
+  a.click();
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function showLoading(msg){
+  document.getElementById('loadingText').textContent=msg||'Exporting...';
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading(){ document.getElementById('loadingOverlay').classList.remove('show'); }
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function resetAll(){
+  singleState={type:'match',accent:'#D62828',barSide:'top',photo:false,photoUrl:null,photoPos:'top center',overlay:60};
+  slides=[defaultSlide()]; currentSlide=0;
+  document.getElementById('photoToggle').checked=false;
+  document.getElementById('photo-controls').style.display='none';
+  if(appMode==='single'){
+    setType('match',document.querySelector('[data-type="match"]'));
+  } else {
+    buildSlideStrip(); loadSlideFields(); renderStory();
+  }
+  render();
+}
+
+// INIT
+document.getElementById('mode-single').style.display='flex';
+document.getElementById('mode-single').style.flexDirection='column';
+buildSlideStrip();
+render();
+</script>
+</body>
+</html>
