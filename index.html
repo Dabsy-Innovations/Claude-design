@@ -150,7 +150,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 
 /* phone */
 .phone{width:220px;height:390px;border-radius:6px;overflow:hidden;position:relative;background:var(--black);box-shadow:0 0 0 1px var(--border2);flex-shrink:0}
-.p-photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+.p-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:none}
 .p-overlay{position:absolute;inset:0}
 .p-bar-top{position:absolute;top:0;left:0;right:0;height:3px;z-index:6}
 .p-bar-left{position:absolute;top:0;left:0;bottom:0;width:3px;z-index:6}
@@ -500,7 +500,8 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
   <div id="slideDotsWrap" style="display:none"><div class="slide-dots" id="slideDots"></div></div>
 
   <div class="phone" id="previewCard">
-    <div class="p-photo" id="pPhoto"></div>
+    <img class="p-photo" id="pPhoto" alt="">
+
     <div class="p-overlay" id="pOverlay" style="display:none"></div>
     <div class="p-bar-top" id="pBarTop" style="background:#D62828"></div>
     <div class="p-bar-left" id="pBarLeft" style="background:#D62828;display:none"></div>
@@ -808,14 +809,16 @@ function applyPhotoToPreview(photoUrl, photoPos, overlay, active){
   const ov=document.getElementById('pOverlay');
   const ghost=document.getElementById('pGhost');
   if(active&&photoUrl){
-    photo.style.backgroundImage=`url('${photoUrl}')`;
-    photo.style.backgroundPosition=photoPos||'top center';
+    photo.src=photoUrl;
+    photo.style.display='block';
+    photo.style.objectPosition=photoPos||'top center';
     ov.style.display='block';
     const v=overlay/100;
     ov.style.background=`linear-gradient(to bottom,rgba(10,10,10,${(v*.22).toFixed(2)}) 0%,rgba(10,10,10,${(v*.50).toFixed(2)}) 40%,rgba(10,10,10,${(v*.88).toFixed(2)}) 68%,rgba(10,10,10,${Math.min(v*1.05,.98).toFixed(2)}) 100%)`;
     ghost.style.display='none';
   } else {
-    photo.style.backgroundImage='';
+    photo.removeAttribute('src');
+    photo.style.display='none';
     ov.style.display='none';
     ghost.style.display='block';
   }
@@ -985,8 +988,12 @@ function renderStory(){
 // ══════════════════════════════════════════
 // EXPORT — HIGH QUALITY PNG via html2canvas
 // ══════════════════════════════════════════
-async function captureCard(scale=4){
+async function captureCard(targetWidth=1080){
   const card=document.getElementById('previewCard');
+  // Scale the tiny on-screen preview (220px wide) up to the real
+  // export width so the PNG is at native social resolution (1080px),
+  // not an under-sized file that platforms have to upscale (=blur).
+  const scale=targetWidth/card.offsetWidth;
   return await html2canvas(card,{
     scale:scale,
     useCORS:true,
@@ -1000,9 +1007,9 @@ async function captureCard(scale=4){
 async function exportCurrent(){
   showLoading('Exporting slide...');
   try {
-    const canvas=await captureCard(4);
+    const canvas=await captureCard(1080);
     download(canvas, `block90_${appMode==='story'?'slide'+(currentSlide+1):'post'}_${Date.now()}.png`);
-    toast('Exported — 1080×1920px PNG');
+    toast(`Exported — ${canvas.width}×${canvas.height}px PNG`);
   } catch(err){ toast('Export failed — try again'); }
   hideLoading();
 }
@@ -1017,7 +1024,7 @@ async function exportAll(){
     currentSlide=i; loadSlideFields(); renderStory();
     await new Promise(r=>setTimeout(r,120)); // let DOM settle
     try {
-      const canvas=await captureCard(4);
+      const canvas=await captureCard(1080);
       download(canvas,`block90_slide${String(i+1).padStart(2,'0')}_of${total}.png`);
       await new Promise(r=>setTimeout(r,80));
     } catch(e){}
