@@ -186,8 +186,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 
 /* cover slide */
 .p-cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px}
-.p-cover-mark{width:80px;height:80px;background:#D62828;clip-path:polygon(0 0,100% 0,100% 72%,72% 100%,0 100%);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
-.p-cover-mark span{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#F0EDE8;letter-spacing:1px;line-height:1}
+.p-cover-mark{width:80px;height:80px;display:block;margin-bottom:4px}
 .p-cover-wordmark{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;color:#F0EDE8;line-height:1}
 .p-cover-wordmark span{color:#D62828}
 .p-cover-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;color:#F0EDE8;line-height:1.2;letter-spacing:.3px}
@@ -1176,7 +1175,7 @@ function renderStory(){
   } else if(s.type==='cover'){
     html=`
       <div class="p-cover">
-        <div class="p-cover-mark"><span>B90</span></div>
+        <svg class="p-cover-mark" viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 80,0 80,57.6 57.6,80 0,80" fill="#D62828"/><text x="40" y="46" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="28" fill="#F0EDE8" letter-spacing="1">90'</text></svg>
         <div class="p-cover-wordmark">BLOCK <span>90'</span></div>
         ${s.coverTitle?`<div class="p-cover-title">${e(s.coverTitle)}</div>`:''}
         ${s.coverSubtitle?`<div class="p-cover-sub">${e(s.coverSubtitle)}</div>`:''}
