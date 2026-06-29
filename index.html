@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block 90' Studio</title>
+<!-- apply saved UI theme before first paint (no flash) -->
+<script>try{var _t=localStorage.getItem('b90-theme');document.documentElement.setAttribute('data-theme',_t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}</script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -155,7 +157,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 .p-bar-top{position:absolute;top:0;left:0;right:0;height:3px;z-index:6}
 .p-bar-left{position:absolute;top:0;left:0;bottom:0;width:3px;z-index:6}
 .p-ghost{position:absolute;bottom:-8px;right:-6px;font-family:'Bebas Neue',sans-serif;font-size:120px;color:rgba(214,40,40,.05);line-height:1;letter-spacing:-4px;pointer-events:none;user-select:none;z-index:1}
-.p-content{position:absolute;inset:0;padding:12px 10px 10px;display:flex;flex-direction:column;z-index:5}
+.p-content{position:absolute;inset:0;padding:12px 10px 10px;display:flex;flex-direction:column;z-index:5;--headline-scale:1}
 .p-spacer{flex:1}
 .p-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px}
 .p-score-block{margin-bottom:0}
@@ -163,9 +165,9 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 .p-team{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;color:var(--white);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .p-score-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--white);line-height:1;min-width:18px;text-align:center}
 .p-divider{height:.5px;background:rgba(46,46,46,.6);margin:6px 0}
-.p-headline{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.2;letter-spacing:.3px}
+.p-headline{font-family:'Barlow Condensed',sans-serif;font-size:calc(14px * var(--headline-scale));font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.2;letter-spacing:.3px}
 .p-quote{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:.8;margin-bottom:4px}
-.p-body{font-family:'Barlow',sans-serif;font-size:11px;color:#C0BBBA;line-height:1.5}
+.p-body{font-family:'Barlow',sans-serif;font-size:calc(11px * var(--headline-scale));color:#C0BBBA;line-height:1.5}
 .p-player-first{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);line-height:1;letter-spacing:1px}
 .p-player-last{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);line-height:1;letter-spacing:1px}
 .p-fee-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(20,20,20,.88);border:.5px solid var(--border2);border-radius:2px;padding:3px 8px;margin-top:4px}
@@ -180,7 +182,29 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 .p-slide-badge{position:absolute;top:10px;right:10px;z-index:7;font-family:'Bebas Neue',sans-serif;font-size:11px;color:rgba(240,237,232,.5);letter-spacing:1px}
 
 /* story quote slide */
-.p-story-quote{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.25;letter-spacing:.3px;flex:1;display:flex;align-items:center}
+.p-story-quote{font-family:'Barlow Condensed',sans-serif;font-size:calc(18px * var(--headline-scale));font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.25;letter-spacing:.3px;flex:1;display:flex;align-items:center}
+
+/* cover slide */
+.p-cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px}
+.p-cover-mark{width:80px;height:80px;background:#D62828;clip-path:polygon(0 0,100% 0,100% 72%,72% 100%,0 100%);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.p-cover-mark span{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#F0EDE8;letter-spacing:1px;line-height:1}
+.p-cover-wordmark{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;color:#F0EDE8;line-height:1}
+.p-cover-wordmark span{color:#D62828}
+.p-cover-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;color:#F0EDE8;line-height:1.2;letter-spacing:.3px}
+.p-cover-sub{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#F4A01C}
+.p-cover-line{height:3px;width:60%;background:#D62828;align-self:center;margin:0 auto 7px}
+
+/* font-size slider head + reset */
+.fs-head{display:flex;align-items:center;justify-content:space-between}
+.fs-reset{background:var(--surface);border:.5px solid var(--border2);color:var(--slate);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:var(--r);cursor:pointer;transition:all .15s}
+.fs-reset:hover{border-color:var(--red);color:var(--red)}
+
+/* highlight-word indicator (editor UI only) */
+.hl-wrap{display:flex;flex-direction:column;gap:5px}
+.hl-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--slate)}
+.hl-pills{display:inline-flex;gap:4px;flex-wrap:wrap}
+.hl-pill{background:rgba(214,40,40,0.15);border:.5px solid #D62828;color:#D62828;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:2px}
+.hl-empty{color:var(--muted);font-size:10px;font-style:italic}
 
 /* preview nav arrows */
 .preview-nav{display:flex;gap:8px}
@@ -212,6 +236,36 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 .loading-bar{width:180px;height:2px;background:var(--border2);border-radius:1px;overflow:hidden}
 .loading-fill{height:100%;background:var(--red);border-radius:1px;animation:loadanim 1.2s ease-in-out infinite}
 @keyframes loadanim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+
+/* ══ LIGHT MODE (UI only — post card always stays dark) ══ */
+html[data-theme="light"],[data-theme="light"] body{background:#F5F5F0;color:#1A1A1A}
+[data-theme="light"] .editor-panel{background:#FFFFFF;border-right:1px solid #E0DDD8}
+[data-theme="light"] .editor-panel::-webkit-scrollbar-thumb{background:#D0CEC9}
+[data-theme="light"] .sec-title{color:#999;border-bottom-color:#E0DDD8}
+[data-theme="light"] .field label,[data-theme="light"] .hl-label{color:#888}
+[data-theme="light"] .field input,[data-theme="light"] .field textarea,[data-theme="light"] .field select{background:#F0EEE9;border:.5px solid #D0CEC9;color:#1A1A1A}
+[data-theme="light"] .field input:focus,[data-theme="light"] .field textarea:focus,[data-theme="light"] .field select:focus{border-color:#D62828}
+[data-theme="light"] .field select option{background:#F0EEE9;color:#1A1A1A}
+[data-theme="light"] .type-pill{background:#F0EEE9;border-color:#D0CEC9;color:#888}
+[data-theme="light"] .pos-btn{background:#F0EEE9;border-color:#D0CEC9;color:#888}
+[data-theme="light"] .topbar{background:#FFFFFF;border-bottom:1px solid #E0DDD8}
+[data-theme="light"] .topbar-logo{color:#1A1A1A}
+[data-theme="light"] .tb-label{color:#1A1A1A}
+[data-theme="light"] .tb-div{background:#D0CEC9}
+[data-theme="light"] .mode-tabs{background:#F0EEE9}
+[data-theme="light"] .mode-tab{color:#888}
+[data-theme="light"] .mode-tab.active{background:#FFFFFF;color:#1A1A1A}
+[data-theme="light"] .btn-reset,[data-theme="light"] .fs-reset{background:#F0EEE9;color:#888;border:.5px solid #D0CEC9}
+[data-theme="light"] .exp-secondary{background:#F0EEE9;color:#888;border:.5px solid #D0CEC9}
+[data-theme="light"] .upload-zone{background:#F0EEE9;border-color:#D0CEC9}
+[data-theme="light"] .upload-text{color:#888}
+[data-theme="light"] .story-paste-area{background:#F0EEE9;border-color:#D0CEC9;color:#888}
+[data-theme="light"] .toggle-lbl{color:#888}
+[data-theme="light"] .slide-thumb{background:#F0EEE9;border-color:#D0CEC9}
+[data-theme="light"] .slide-thumb.active{border-color:#D62828}
+[data-theme="light"] .preview-panel{background:#E8E5E0}
+[data-theme="light"] .preview-label{color:#999}
+[data-theme="light"] .preview-nav button{background:#FFFFFF;border-color:#D0CEC9;color:#1A1A1A}
 </style>
 </head>
 <body>
@@ -229,6 +283,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
     <button class="mode-tab" id="tab-story" onclick="setMode('story')">Story / Thread</button>
   </div>
   <div class="tb-space"></div>
+  <button class="tb-btn btn-reset" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark UI">☾</button>
   <button class="tb-btn btn-reset" onclick="resetAll()">Reset</button>
   <button class="tb-btn btn-export" onclick="exportCurrent()">⬇ Export PNG</button>
 </header>
@@ -280,6 +335,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
           </div>
           <div class="field"><label>Reaction Headline</label><textarea id="m-text" oninput="render()">Saka with a brace and Arsenal never looked back.</textarea></div>
           <div class="field"><label>Highlight Word (red)</label><input id="m-hl" value="brace" oninput="render()"></div>
+          <div id="hlind-match" class="hl-wrap"></div>
           <div class="field"><label>Status</label>
             <select id="m-status" onchange="render()">
               <option>Full Time</option><option>Live</option><option>Half Time</option>
@@ -292,6 +348,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
         <div style="display:flex;flex-direction:column;gap:10px">
           <div class="field"><label>Statement</label><textarea id="t-text" oninput="render()">Ronaldo is not a top 5 player of all time. The numbers don't lie.</textarea></div>
           <div class="field"><label>Highlight Phrase (gold)</label><input id="t-hl" value="top 5" oninput="render()"></div>
+          <div id="hlind-take" class="hl-wrap"></div>
           <div class="field"><label>Call to Action</label><input id="t-cta" value="Agree or nah? ↓" oninput="render()"></div>
         </div>
       </div>
@@ -321,6 +378,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
           <div class="field"><label>Eyebrow</label><input id="tc-eyebrow" value="Tactical Breakdown" oninput="render()"></div>
           <div class="field"><label>Headline</label><textarea id="tc-text" oninput="render()">Why the 4-3-3 is Destroying High Blocks</textarea></div>
           <div class="field"><label>Highlight Word</label><input id="tc-hl" value="4-3-3" oninput="render()"></div>
+          <div id="hlind-tactics" class="hl-wrap"></div>
           <div class="field"><label>Key Point 1</label><input id="tc-p1" value="Wide forwards stretch the block open" oninput="render()"></div>
           <div class="field"><label>Key Point 2</label><input id="tc-p2" value="The 8 and 10 arrive late into pockets" oninput="render()"></div>
         </div>
@@ -343,6 +401,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
           <div class="field"><label>Eyebrow</label><input id="cu-eyebrow" value="Football Culture" oninput="render()"></div>
           <div class="field"><label>Headline</label><textarea id="cu-text" oninput="render()">The last player who made the entire world stop and watch.</textarea></div>
           <div class="field"><label>Highlight Word (bronze)</label><input id="cu-hl" value="stop" oninput="render()"></div>
+          <div id="hlind-culture" class="hl-wrap"></div>
           <div class="field"><label>Era / Year</label><input id="cu-era" value="2004–2006" oninput="render()"></div>
           <div class="field"><label>Footer Tag</label><input id="cu-tag" value="#Throwback" oninput="render()"></div>
         </div>
@@ -392,6 +451,19 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
       </div>
     </div>
 
+    <!-- TEXT SIZE -->
+    <div class="section">
+      <div class="sec-title">05 — Text Size</div>
+      <div class="field">
+        <div class="fs-head"><label style="margin:0">Headline / Body Scale</label>
+          <button class="fs-reset" onclick="resetSingleFontSize()">Reset</button></div>
+        <div class="slider-row">
+          <input type="range" min="70" max="130" value="100" id="singleFontSlider" oninput="setSingleFontSize(this.value)">
+          <span class="slider-val" id="singleFontVal">100%</span>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /mode-single -->
 
   <!-- ══ STORY MODE ══ -->
@@ -418,7 +490,8 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
         <div class="type-pill active" id="stype-quote" style="background:#1A0A0A;border-color:#D62828;color:#D62828" onclick="setSlideType('quote',this)">💬 Quote /<br>Statement</div>
         <div class="type-pill" id="stype-story" onclick="setSlideType('story',this)">📰 Story<br>Paragraph</div>
         <div class="type-pill" id="stype-playerquote" onclick="setSlideType('playerquote',this)">🎤 Player<br>Quote</div>
-        <div class="type-pill" id="stype-headline" onclick="setSlideType('headline',this)">📢 Cover /<br>Headline</div>
+        <div class="type-pill" id="stype-headline" onclick="setSlideType('headline',this)">📢 Headline</div>
+        <div class="type-pill" id="stype-cover" onclick="setSlideType('cover',this)">🪪 Cover<br>Slide</div>
       </div>
     </div>
 
@@ -438,11 +511,20 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
     <div class="section">
       <div class="sec-title">Current Slide Content</div>
       <div id="story-fields">
-        <div style="display:flex;flex-direction:column;gap:10px">
+        <div id="story-generic-fields" style="display:flex;flex-direction:column;gap:10px">
           <div class="field"><label>Eyebrow / Label</label><input id="s-eyebrow" value="Block 90' · Story" oninput="saveAndRender()"></div>
           <div class="field"><label>Main Text</label><textarea id="s-text" style="min-height:100px" oninput="saveAndRender()">Paste or type your slide text here.</textarea></div>
           <div class="field"><label>Attribution (for player quotes)</label><input id="s-attr" value="" placeholder="e.g. — Virgil van Dijk" oninput="saveAndRender()"></div>
           <div class="field"><label>Highlight Word (red)</label><input id="s-hl" value="" oninput="saveAndRender()"></div>
+          <div id="hlind-story" class="hl-wrap"></div>
+          <div class="field">
+            <div class="fs-head"><label style="margin:0">Text Size</label>
+              <button class="fs-reset" onclick="resetStoryFontSize()">Reset</button></div>
+            <div class="slider-row">
+              <input type="range" min="70" max="130" value="100" id="storyFontSlider" oninput="setStoryFontSize(this.value)">
+              <span class="slider-val" id="storyFontVal">100%</span>
+            </div>
+          </div>
           <div class="row2">
             <div class="field"><label>Slide Accent</label>
               <div class="swatch-row" style="flex-wrap:wrap">
@@ -455,6 +537,10 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
             </div>
             <div class="field"><label>Footer Tag</label><input id="s-tag" value="#Block90" oninput="saveAndRender()"></div>
           </div>
+        </div>
+        <div id="cover-fields" style="display:none;flex-direction:column;gap:10px">
+          <div class="field"><label>Story Title</label><input id="c-title" value="" placeholder="e.g. THE COMEBACK" oninput="saveCoverAndRender()"></div>
+          <div class="field"><label>Subtitle / Date</label><input id="c-sub" value="" placeholder="e.g. Matchday 34 · June 2026" oninput="saveCoverAndRender()"></div>
         </div>
       </div>
     </div>
@@ -539,7 +625,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 let appMode = 'single';
 let singleState = {
   type:'match', accent:'#D62828', barSide:'top',
-  photo:false, photoUrl:null, photoPos:'top center', overlay:60
+  photo:false, photoUrl:null, photoPos:'top center', overlay:60, fontSize:100
 };
 // Story slides: array of slide objects
 let slides = [defaultSlide()];
@@ -549,7 +635,8 @@ function defaultSlide(){
   return {
     type:'quote', accent:'#D62828',
     eyebrow:'Block 90\' · Story', text:'', attr:'', hl:'', tag:'#Block90',
-    photo:false, photoUrl:null, overlay:65
+    photo:false, photoUrl:null, overlay:65, fontSize:100,
+    coverTitle:'', coverSubtitle:''
   };
 }
 
@@ -578,6 +665,71 @@ function setMode(m){
 }
 
 // ══════════════════════════════════════════
+// THEME (light / dark UI — post card stays dark)
+// ══════════════════════════════════════════
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
+  const next=cur==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
+  try{ localStorage.setItem('b90-theme',next); }catch(e){}
+  updateThemeIcon();
+}
+function updateThemeIcon(){
+  const b=document.getElementById('themeToggle'); if(!b)return;
+  const light=document.documentElement.getAttribute('data-theme')==='light';
+  b.textContent = light ? '☀' : '☾';
+}
+
+// ══════════════════════════════════════════
+// FONT SIZE (scales headline / body / quote only)
+// ══════════════════════════════════════════
+function setSingleFontSize(v){
+  singleState.fontSize=parseInt(v)||100;
+  document.getElementById('singleFontVal').textContent=singleState.fontSize+'%';
+  render();
+}
+function resetSingleFontSize(){
+  singleState.fontSize=100;
+  document.getElementById('singleFontSlider').value=100;
+  document.getElementById('singleFontVal').textContent='100%';
+  render();
+}
+function setStoryFontSize(v){
+  slides[currentSlide].fontSize=parseInt(v)||100;
+  document.getElementById('storyFontVal').textContent=slides[currentSlide].fontSize+'%';
+  renderStory();
+}
+function resetStoryFontSize(){
+  slides[currentSlide].fontSize=100;
+  document.getElementById('storyFontSlider').value=100;
+  document.getElementById('storyFontVal').textContent='100%';
+  renderStory();
+}
+
+// ══════════════════════════════════════════
+// HIGHLIGHT-WORD INDICATOR (editor UI only)
+// ══════════════════════════════════════════
+function highlightPills(text,word){
+  if(!word||!word.trim()) return null;
+  const rx=new RegExp('('+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  const matches=String(text||'').match(rx);
+  if(!matches||!matches.length) return null;
+  const uniq=[],seen=new Set();
+  matches.forEach(m=>{const k=m.toLowerCase();if(!seen.has(k)){seen.add(k);uniq.push(m);}});
+  return uniq;
+}
+function renderHLIndicator(containerId,text,word){
+  const c=document.getElementById(containerId); if(!c)return;
+  const pills=highlightPills(text,word);
+  let inner='<div class="hl-label">Highlighted in preview</div>';
+  if(!pills) inner+='<div class="hl-empty">No match — type a word above</div>';
+  else inner+='<div class="hl-pills">'+pills.map(p=>`<span class="hl-pill">${e(p)}</span>`).join('')+'</div>';
+  c.innerHTML=inner;
+}
+function val(id){const el=document.getElementById(id);return el?el.value:'';}
+const singleHLMap={match:['m-text','m-hl'],take:['t-text','t-hl'],tactics:['tc-text','tc-hl'],culture:['cu-text','cu-hl']};
+
+// ══════════════════════════════════════════
 // SINGLE MODE
 // ══════════════════════════════════════════
 function setType(type, el){
@@ -595,6 +747,10 @@ function setType(type, el){
   ['match','take','transfer','tactics','stats','culture'].forEach(t=>{
     document.getElementById('fields-'+t).style.display = t===type?'block':'none';
   });
+  // font size resets to 100% when post type changes
+  singleState.fontSize=100;
+  const fs=document.getElementById('singleFontSlider');
+  if(fs){ fs.value=100; document.getElementById('singleFontVal').textContent='100%'; }
   render();
 }
 
@@ -620,7 +776,7 @@ function loadPhoto(e){
 
 function setPos(pos,el){
   singleState.photoPos=pos;
-  document.getElementById('pPhoto').style.backgroundPosition=pos;
+  document.getElementById('pPhoto').style.objectPosition=pos;
   document.querySelectorAll('#mode-single .pos-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
@@ -636,7 +792,16 @@ function setSlideType(type,el){
   slides[currentSlide].type=type;
   document.querySelectorAll('#mode-story .type-pill').forEach(p=>{p.classList.remove('active');p.style.background='';p.style.borderColor='';p.style.color='';});
   el.classList.add('active'); el.style.background='#1A0A0A'; el.style.borderColor='#D62828'; el.style.color='#D62828';
+  updateStoryFieldVisibility(type);
   renderStory();
+}
+
+function updateStoryFieldVisibility(type){
+  const cover=type==='cover';
+  const cf=document.getElementById('cover-fields');
+  const gf=document.getElementById('story-generic-fields');
+  if(cf) cf.style.display=cover?'flex':'none';
+  if(gf) gf.style.display=cover?'none':'flex';
 }
 
 function setSlideAccent(color,el){
@@ -714,6 +879,13 @@ function loadSlideFields(){
   document.getElementById('s-attr').value=s.attr||'';
   document.getElementById('s-hl').value=s.hl||'';
   document.getElementById('s-tag').value=s.tag||'';
+  // cover-slide fields
+  document.getElementById('c-title').value=s.coverTitle||'';
+  document.getElementById('c-sub').value=s.coverSubtitle||'';
+  updateStoryFieldVisibility(s.type);
+  // per-slide font size — restore slider position
+  document.getElementById('storyFontSlider').value=s.fontSize||100;
+  document.getElementById('storyFontVal').textContent=(s.fontSize||100)+'%';
   // set type pills
   document.querySelectorAll('#mode-story .type-pill').forEach(p=>{
     const active=(p.id==='stype-'+s.type);
@@ -747,6 +919,13 @@ function saveAndRender(){
   s.attr=document.getElementById('s-attr').value;
   s.hl=document.getElementById('s-hl').value;
   s.tag=document.getElementById('s-tag').value;
+  renderStory();
+}
+
+function saveCoverAndRender(){
+  const s=slides[currentSlide];
+  s.coverTitle=document.getElementById('c-title').value;
+  s.coverSubtitle=document.getElementById('c-sub').value;
   renderStory();
 }
 
@@ -846,6 +1025,7 @@ function render(){
   document.getElementById('pSlideBadge').style.display='none';
 
   const content=document.getElementById('pContent');
+  content.style.setProperty('--headline-scale',(st.fontSize||100)/100);
   const a=st.accent;
   let html='';
 
@@ -866,7 +1046,7 @@ function render(){
     html=`
       <div style="display:inline-flex;background:#D62828;padding:2px 7px;border-radius:1px;font-family:'Barlow Condensed',sans-serif;font-size:6px;font-weight:600;letter-spacing:2px;color:#F0EDE8;text-transform:uppercase;margin-bottom:6px">Hot Take</div>
       <div class="p-quote" style="color:${a}">"</div>
-      <div class="p-headline" style="font-size:16px">${hl(document.getElementById('t-text').value,document.getElementById('t-hl').value,'#F4A01C')}</div>
+      <div class="p-headline" style="font-size:calc(16px * var(--headline-scale))">${hl(document.getElementById('t-text').value,document.getElementById('t-hl').value,'#F4A01C')}</div>
       <div class="p-spacer"></div>
       <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(document.getElementById('t-cta').value)}</div></div>`;
   } else if(st.type==='transfer'){
@@ -888,7 +1068,7 @@ function render(){
   } else if(st.type==='tactics'){
     html=`
       <div class="p-eyebrow" style="color:#F4A01C">${e(document.getElementById('tc-eyebrow').value)}</div>
-      <div class="p-headline" style="font-size:13px">${hl(document.getElementById('tc-text').value,document.getElementById('tc-hl').value,'#D62828')}</div>
+      <div class="p-headline" style="font-size:calc(13px * var(--headline-scale))">${hl(document.getElementById('tc-text').value,document.getElementById('tc-hl').value,'#D62828')}</div>
       <div class="p-spacer"></div>
       <div style="background:#0D1A0F;border:.5px solid #1A3020;border-radius:2px;padding:8px 6px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-around;margin-bottom:6px">${[1,2,3,4].map(()=>'<div style="width:12px;height:12px;border-radius:50%;border:1px solid #5A5A5A"></div>').join('')}</div>
@@ -915,7 +1095,7 @@ function render(){
       </div>`).join('');
     html=`
       <div class="p-eyebrow" style="color:#378ADD">Stats</div>
-      <div class="p-headline" style="font-size:13px;margin-bottom:10px">${e(document.getElementById('st-title').value)}</div>
+      <div class="p-headline" style="font-size:calc(13px * var(--headline-scale));margin-bottom:10px">${e(document.getElementById('st-title').value)}</div>
       ${bars}
       <div class="p-spacer"></div>
       <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">#Stats</div></div>`;
@@ -924,11 +1104,14 @@ function render(){
       <div class="p-eyebrow" style="color:#8B6914">${e(document.getElementById('cu-eyebrow').value)}</div>
       <div class="p-spacer"></div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:rgba(139,105,20,0.1);line-height:1;position:absolute;bottom:60px;right:8px;pointer-events:none">${e(document.getElementById('cu-era').value)}</div>
-      <div class="p-headline" style="font-size:16px">${hl(document.getElementById('cu-text').value,document.getElementById('cu-hl').value,'#8B6914')}</div>
+      <div class="p-headline" style="font-size:calc(16px * var(--headline-scale))">${hl(document.getElementById('cu-text').value,document.getElementById('cu-hl').value,'#8B6914')}</div>
       <div class="p-spacer"></div>
       <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(document.getElementById('cu-tag').value)}</div></div>`;
   }
   content.innerHTML=html;
+  // live highlight-word indicator for the active type
+  const m=singleHLMap[st.type];
+  if(m) renderHLIndicator('hlind-'+st.type, val(m[0]), val(m[1]));
 }
 
 // ══════════════════════════════════════════
@@ -937,14 +1120,24 @@ function render(){
 function renderStory(){
   if(appMode!=='story')return;
   const s=slides[currentSlide];
-  setBars(s.accent,'left');
-  applyPhotoToPreview(s.photoUrl,null,s.overlay,s.photo&&!!s.photoUrl);
+  const isCover=s.type==='cover';
 
   const badge=document.getElementById('pSlideBadge');
-  badge.style.display='block';
-  badge.textContent=`${currentSlide+1}/${slides.length}`;
+  if(isCover){
+    // cover slides: no accent bars, no photo — always solid black
+    document.getElementById('pBarTop').style.display='none';
+    document.getElementById('pBarLeft').style.display='none';
+    applyPhotoToPreview(null,null,0,false);
+    badge.style.display='none';
+  } else {
+    setBars(s.accent,'left');
+    applyPhotoToPreview(s.photoUrl,null,s.overlay,s.photo&&!!s.photoUrl);
+    badge.style.display='block';
+    badge.textContent=`${currentSlide+1}/${slides.length}`;
+  }
 
   const content=document.getElementById('pContent');
+  content.style.setProperty('--headline-scale',(s.fontSize||100)/100);
   const a=s.accent;
   let html='';
 
@@ -969,7 +1162,7 @@ function renderStory(){
       <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
       <div class="p-spacer"></div>
       <div class="p-quote" style="color:${a}">"</div>
-      <div class="p-story-quote" style="font-style:italic;font-size:16px">${hl(clean,s.hl,'#D62828')}</div>
+      <div class="p-story-quote" style="font-style:italic;font-size:calc(16px * var(--headline-scale))">${hl(clean,s.hl,'#D62828')}</div>
       ${s.attr?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;color:${a};text-transform:uppercase;margin-top:8px">${e(s.attr)}</div>`:''}
       <div class="p-spacer"></div>
       <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
@@ -977,30 +1170,92 @@ function renderStory(){
     html=`
       <div class="p-eyebrow" style="color:${a}">${e(s.eyebrow)}</div>
       <div class="p-spacer"></div>
-      <div class="p-headline" style="font-size:22px;line-height:1.15">${hl(s.text,s.hl,a)}</div>
+      <div class="p-headline" style="font-size:calc(22px * var(--headline-scale));line-height:1.15">${hl(s.text,s.hl,a)}</div>
       <div class="p-spacer"></div>
       <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${e(s.tag)}</div></div>`;
+  } else if(s.type==='cover'){
+    html=`
+      <div class="p-cover">
+        <div class="p-cover-mark"><span>B90</span></div>
+        <div class="p-cover-wordmark">BLOCK <span>90'</span></div>
+        ${s.coverTitle?`<div class="p-cover-title">${e(s.coverTitle)}</div>`:''}
+        ${s.coverSubtitle?`<div class="p-cover-sub">${e(s.coverSubtitle)}</div>`:''}
+      </div>
+      <div class="p-cover-line"></div>
+      <div class="p-footer"><div class="p-wordmark">BLOCK <span>90'</span></div><div class="p-ftag">${currentSlide+1} / ${slides.length}</div></div>`;
   }
   content.innerHTML=html;
+  // live highlight-word indicator (generic slide types only)
+  if(!isCover) renderHLIndicator('hlind-story', s.text, s.hl);
   buildSlideStrip();
 }
 
 // ══════════════════════════════════════════
 // EXPORT — HIGH QUALITY PNG via html2canvas
 // ══════════════════════════════════════════
+// Convert a blob: object URL into a base64 data URL so html2canvas
+// can rasterise the photo even under cross-origin / taint restrictions.
+function blobUrlToDataURL(url){
+  return fetch(url).then(r=>r.blob()).then(b=>new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>res(fr.result);
+    fr.onerror=rej;
+    fr.readAsDataURL(b);
+  }));
+}
+
 async function captureCard(targetWidth=1080){
   const card=document.getElementById('previewCard');
-  // Scale the tiny on-screen preview (220px wide) up to the real
-  // export width so the PNG is at native social resolution (1080px),
-  // not an under-sized file that platforms have to upscale (=blur).
+
+  // 1) Wait for brand fonts so the export never falls back to a system font.
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+
+  // 2) Pre-convert the photo (blob URL -> data URL) BEFORE html2canvas runs.
+  const oPhoto=card.querySelector('#pPhoto');
+  let photoDataUrl=null;
+  if(oPhoto&&oPhoto.getAttribute('src')&&oPhoto.style.display!=='none'){
+    const src=oPhoto.getAttribute('src');
+    photoDataUrl = src.startsWith('data:') ? src : await blobUrlToDataURL(src).catch(()=>src);
+  }
+
+  // Scale the small on-screen preview (220px wide) up to true 1080px export
+  // width — keeps the PNG at native social resolution instead of upscaled/blurry.
   const scale=targetWidth/card.offsetWidth;
+  const headlineScale=getComputedStyle(document.getElementById('pContent')).getPropertyValue('--headline-scale');
+
   return await html2canvas(card,{
     scale:scale,
     useCORS:true,
     allowTaint:true,
     backgroundColor:'#0A0A0A',
     logging:false,
-    imageTimeout:15000
+    imageTimeout:0,
+    onclone:(clonedDoc)=>{
+      const cCard=clonedDoc.getElementById('previewCard');
+      if(!cCard)return;
+      // Copy resolved font metrics from every original node onto its clone so
+      // the export is pixel-identical (font-family, resolved size incl. scale,
+      // weight, letter-spacing). querySelectorAll order matches the deep clone.
+      const oAll=card.querySelectorAll('*');
+      const cAll=cCard.querySelectorAll('*');
+      for(let i=0;i<oAll.length&&i<cAll.length;i++){
+        const cs=getComputedStyle(oAll[i]);
+        cAll[i].style.fontFamily=cs.fontFamily;
+        cAll[i].style.fontSize=cs.fontSize;
+        cAll[i].style.fontWeight=cs.fontWeight;
+        cAll[i].style.letterSpacing=cs.letterSpacing;
+      }
+      // Preserve the --headline-scale custom property on the cloned content.
+      const cContent=cCard.querySelector('#pContent');
+      if(cContent&&headlineScale) cContent.style.setProperty('--headline-scale',headlineScale.trim());
+      // Inject the base64 photo into the clone (cross-origin safe).
+      const cPhoto=cCard.querySelector('#pPhoto');
+      if(cPhoto&&photoDataUrl){
+        cPhoto.setAttribute('src',photoDataUrl);
+        cPhoto.style.display=oPhoto.style.display;
+        cPhoto.style.objectPosition=oPhoto.style.objectPosition;
+      }
+    }
   });
 }
 
@@ -1008,7 +1263,10 @@ async function exportCurrent(){
   showLoading('Exporting slide...');
   try {
     const canvas=await captureCard(1080);
-    download(canvas, `block90_${appMode==='story'?'slide'+(currentSlide+1):'post'}_${Date.now()}.png`);
+    const name = appMode==='story'
+      ? `block90_slide${currentSlide+1}_of${slides.length}_${Date.now()}.png`
+      : `block90_${singleState.type}_${Date.now()}.png`;
+    download(canvas, name);
     toast(`Exported — ${canvas.width}×${canvas.height}px PNG`);
   } catch(err){ toast('Export failed — try again'); }
   hideLoading();
@@ -1022,10 +1280,10 @@ async function exportAll(){
   for(let i=0;i<total;i++){
     document.getElementById('loadingText').textContent=`Exporting slide ${i+1} of ${total}...`;
     currentSlide=i; loadSlideFields(); renderStory();
-    await new Promise(r=>setTimeout(r,120)); // let DOM settle
+    await new Promise(r=>setTimeout(r,200)); // let DOM + fonts settle
     try {
       const canvas=await captureCard(1080);
-      download(canvas,`block90_slide${String(i+1).padStart(2,'0')}_of${total}.png`);
+      download(canvas,`block90_story_slide${String(i+1).padStart(2,'0')}_of${total}.png`);
       await new Promise(r=>setTimeout(r,80));
     } catch(e){}
   }
@@ -1057,7 +1315,7 @@ function toast(msg){
 }
 
 function resetAll(){
-  singleState={type:'match',accent:'#D62828',barSide:'top',photo:false,photoUrl:null,photoPos:'top center',overlay:60};
+  singleState={type:'match',accent:'#D62828',barSide:'top',photo:false,photoUrl:null,photoPos:'top center',overlay:60,fontSize:100};
   slides=[defaultSlide()]; currentSlide=0;
   document.getElementById('photoToggle').checked=false;
   document.getElementById('photo-controls').style.display='none';
@@ -1070,6 +1328,7 @@ function resetAll(){
 }
 
 // INIT
+updateThemeIcon();
 document.getElementById('mode-single').style.display='flex';
 document.getElementById('mode-single').style.flexDirection='column';
 buildSlideStrip();
