@@ -1203,6 +1203,20 @@ function blobUrlToDataURL(url){
   }));
 }
 
+// Draw an image with CSS `object-fit:cover` + object-position semantics
+// onto a 2D context filling cw x ch. Native sampling = full source quality.
+function drawCover(ctx,img,cw,ch,position){
+  const ir=img.width/img.height, cr=cw/ch;
+  let dw,dh;
+  if(ir>cr){ dh=ch; dw=ch*ir; } else { dw=cw; dh=cw/ir; }
+  const p=(position||'center').toLowerCase();
+  let ax=0.5, ay=0.5;
+  if(p.includes('left'))ax=0; else if(p.includes('right'))ax=1;
+  if(p.includes('top'))ay=0; else if(p.includes('bottom'))ay=1;
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  ctx.drawImage(img,(cw-dw)*ax,(ch-dh)*ay,dw,dh);
+}
+
 async function captureCard(targetWidth=1080){
   const card=document.getElementById('previewCard');
 
@@ -1211,8 +1225,9 @@ async function captureCard(targetWidth=1080){
 
   // 2) Pre-convert the photo (blob URL -> data URL) BEFORE html2canvas runs.
   const oPhoto=card.querySelector('#pPhoto');
+  const hasPhoto = !!(oPhoto && oPhoto.getAttribute('src') && oPhoto.style.display!=='none');
   let photoDataUrl=null;
-  if(oPhoto&&oPhoto.getAttribute('src')&&oPhoto.style.display!=='none'){
+  if(hasPhoto){
     const src=oPhoto.getAttribute('src');
     photoDataUrl = src.startsWith('data:') ? src : await blobUrlToDataURL(src).catch(()=>src);
   }
@@ -1222,11 +1237,14 @@ async function captureCard(targetWidth=1080){
   const scale=targetWidth/card.offsetWidth;
   const headlineScale=getComputedStyle(document.getElementById('pContent')).getPropertyValue('--headline-scale');
 
-  return await html2canvas(card,{
+  // Render the text / overlay / bars layer. When there's a photo we make this
+  // layer TRANSPARENT and composite the photo ourselves at full resolution —
+  // html2canvas downsamples <img> elements, which softens the photo badly.
+  const layer = await html2canvas(card,{
     scale:scale,
     useCORS:true,
     allowTaint:true,
-    backgroundColor:'#0A0A0A',
+    backgroundColor: hasPhoto ? null : '#0A0A0A',
     logging:false,
     imageTimeout:0,
     onclone:(clonedDoc)=>{
@@ -1247,15 +1265,32 @@ async function captureCard(targetWidth=1080){
       // Preserve the --headline-scale custom property on the cloned content.
       const cContent=cCard.querySelector('#pContent');
       if(cContent&&headlineScale) cContent.style.setProperty('--headline-scale',headlineScale.trim());
-      // Inject the base64 photo into the clone (cross-origin safe).
-      const cPhoto=cCard.querySelector('#pPhoto');
-      if(cPhoto&&photoDataUrl){
-        cPhoto.setAttribute('src',photoDataUrl);
-        cPhoto.style.display=oPhoto.style.display;
-        cPhoto.style.objectPosition=oPhoto.style.objectPosition;
+      if(hasPhoto){
+        // photo is drawn separately at full res -> hide it + clear the card
+        // background so only overlay/text/bars rasterise over transparency.
+        cCard.style.background='transparent';
+        cCard.style.boxShadow='none';
+        const cPhoto=cCard.querySelector('#pPhoto');
+        if(cPhoto) cPhoto.style.display='none';
       }
     }
   });
+
+  if(!hasPhoto) return layer;
+
+  // Composite: full-resolution photo (cover) UNDER the html2canvas text layer.
+  const out=document.createElement('canvas');
+  out.width=layer.width; out.height=layer.height;
+  const ctx=out.getContext('2d');
+  ctx.fillStyle='#0A0A0A'; ctx.fillRect(0,0,out.width,out.height);
+  try{
+    const img=new Image();
+    img.src=photoDataUrl;
+    await img.decode();
+    drawCover(ctx,img,out.width,out.height,oPhoto.style.objectPosition);
+  }catch(e){ /* fall back to plain layer if photo fails to decode */ }
+  ctx.drawImage(layer,0,0);
+  return out;
 }
 
 async function exportCurrent(){
