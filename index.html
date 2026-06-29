@@ -193,7 +193,11 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'Ba
 .p-slide-badge{position:absolute;top:30px;right:32px;z-index:7;font-family:'Bebas Neue',sans-serif;font-size:11px;color:rgba(240,237,232,.5);letter-spacing:1px}
 
 /* story quote slide */
-.p-story-quote{font-family:'Barlow Condensed',sans-serif;font-size:calc(18px * var(--headline-scale));font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.25;letter-spacing:.3px;flex:1;display:flex;align-items:center}
+/* must stay a normal block: the highlight word injects inline <span>s, and
+   a flex container would turn each span/text-run into a separate flex item
+   (fragmenting the quote into columns). Vertical centring comes from the
+   surrounding .p-spacer elements. */
+.p-story-quote{font-family:'Barlow Condensed',sans-serif;font-size:calc(18px * var(--headline-scale));font-weight:700;text-transform:uppercase;color:var(--white);line-height:1.25;letter-spacing:.3px;overflow-wrap:break-word}
 
 /* cover slide */
 .p-cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px}
